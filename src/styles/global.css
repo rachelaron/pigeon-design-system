@@ -9,8 +9,8 @@ html, body { margin: 0; padding: 0; background: var(--bg-page); }
 html { overflow-x: hidden; }
 body { font-family: var(--font-sans); color: var(--ink-soft); }
 
-a { color: var(--ink-soft); text-decoration: none; }
-a:hover:not(.pg-btn) { color: var(--accent); }
+a { color: var(--accent); text-decoration: none; }
+a:hover:not(.pg-btn) { color: var(--lilac); }
 
 :focus-visible { outline: 2px solid var(--accent-solid); outline-offset: 2px; }
 
@@ -42,6 +42,17 @@ img, svg { max-width: 100%; height: auto; }
 @media (max-width: 480px) {
   .pg-hero-h1 { font-size: var(--fs-36) !important; }
   .pg-page-h1 { font-size: var(--fs-27) !important; }
+}
+
+/*
+  Print. Forces the page background to plain white regardless of theme
+  (light, dark, or OS dark-mode-during-print) and regardless of whether
+  the browser's own "print background graphics" setting is on — so
+  saving/printing to PDF never wastes toner or shifts contrast on a
+  cool-gray or near-black page fill.
+*/
+@media print {
+  html, body { background: #fff !important; }
 }
 
 /*

@@ -13,6 +13,7 @@
 */
 
 :root {
+  color-scheme: light dark;
 
   /* ---------- COLOR — neutrals (cool, hue ~250) ---------- */
   /* Darkest to lightest. --ink is primary text; --surface/--white are backgrounds. */
@@ -60,7 +61,6 @@
   --font-sans: 'Work Sans', sans-serif;  /* secondary — longer-form copy */
 
   /* Type scale (named by current px value — tweak the value, not the name) */
-  --fs-10: 10px;
   --fs-11: 11px;
   --fs-12: 12px;
   --fs-13: 13px;
@@ -90,6 +90,7 @@
 
   /* ---------- RADIUS ---------- */
   --radius-none: 0;
+  --radius-btn:  8px;
   --radius-lg:   20px;
   --radius-pill: 999px;
 
@@ -116,4 +117,66 @@
 
   /* ---------- MOTION ---------- */
   --transition-base: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+/*
+  DARK MODE
+  ===================================================
+  Same hue (~250) neutral ramp, inverted, plus a brighter accent so teal
+  still pops off a dark page. Applies automatically from OS preference;
+  a consuming site can force either theme by setting data-theme="dark"
+  or data-theme="light" on <html>, ahead of (or instead of) OS preference.
+  Structural tokens (radius, spacing, type, motion) are theme-independent
+  and aren't repeated here.
+*/
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink:          oklch(95% 0.006 250);
+    --ink-soft:     oklch(88% 0.008 250);
+    --ink-mid:      oklch(82% 0.01  250);
+    --gray-dark:    oklch(70% 0.012 250);
+    --gray:         oklch(62% 0.012 250);
+    --gray-mid:     oklch(62% 0.012 250);
+    --gray-mid-2:   oklch(56% 0.012 250);
+    --gray-light:   oklch(40% 0.012 250);
+    --border:       oklch(32% 0.016 250);
+    --border-light: oklch(36% 0.016 250);
+    --bg-page:      oklch(18% 0.012 250);
+    --bg-subtle:    oklch(22% 0.012 250);
+    --surface:      oklch(24% 0.014 250);
+    --surface-card: oklch(25% 0.016 250);
+    --white:        oklch(24% 0.014 250); /* card/panel fill — see --white note in ContactForm/about/ContactSection */
+
+    --accent:       oklch(72% 0.11 190);
+    --accent-solid: oklch(62% 0.1  190);
+
+    --shadow-sm: 0 1px 3px oklch(0% 0 0 / 30%);
+    --shadow-md: 4px 6px 0 oklch(0% 0 0 / 35%), 2px 10px 16px oklch(0% 0 0 / 45%);
+    --shadow-lg: 0 12px 28px oklch(0% 0 0 / 45%);
+  }
+}
+
+:root[data-theme="dark"] {
+  --ink:          oklch(95% 0.006 250);
+  --ink-soft:     oklch(88% 0.008 250);
+  --ink-mid:      oklch(82% 0.01  250);
+  --gray-dark:    oklch(70% 0.012 250);
+  --gray:         oklch(62% 0.012 250);
+  --gray-mid:     oklch(62% 0.012 250);
+  --gray-mid-2:   oklch(56% 0.012 250);
+  --gray-light:   oklch(40% 0.012 250);
+  --border:       oklch(32% 0.016 250);
+  --border-light: oklch(36% 0.016 250);
+  --bg-page:      oklch(18% 0.012 250);
+  --bg-subtle:    oklch(22% 0.012 250);
+  --surface:      oklch(24% 0.014 250);
+  --surface-card: oklch(25% 0.016 250);
+  --white:        oklch(24% 0.014 250);
+
+  --accent:       oklch(72% 0.11 190);
+  --accent-solid: oklch(62% 0.1  190);
+
+  --shadow-sm: 0 1px 3px oklch(0% 0 0 / 30%);
+  --shadow-md: 4px 6px 0 oklch(0% 0 0 / 35%), 2px 10px 16px oklch(0% 0 0 / 45%);
+  --shadow-lg: 0 12px 28px oklch(0% 0 0 / 45%);
 }
