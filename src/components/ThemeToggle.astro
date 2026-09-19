@@ -1,0 +1,354 @@
+---
+// Light / dark / custom theme switcher. Reads and writes localStorage
+// keys "pg-theme" ('light' | 'dark' | 'custom') and, for custom,
+// "pg-theme-custom-ink" / "pg-theme-custom-bg" (hex strings). Defaults
+// to 'light' regardless of OS preference — see the blocking script in
+// Layout.astro's <head> for the pre-paint half of this (avoids a flash
+// of the wrong theme); this component owns the interactive half.
+---
+<div data-pg-theme-toggle>
+ <div class="pg-theme-toggle">
+  <button type="button" class="pg-theme-btn" data-pg-theme-btn aria-haspopup="true" aria-expanded="false" aria-label="Change site theme">
+    <span class="pg-theme-mode-icon" data-pg-theme-mode-icon aria-hidden="true">
+      <svg data-icon="sun" width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="2"/><path d="M12 2.5V5M12 19V21.5M21.5 12H19M5 12H2.5M18.5 5.5L16.8 7.2M7.2 16.8L5.5 18.5M18.5 18.5L16.8 16.8M7.2 7.2L5.5 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <svg data-icon="moon" width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" hidden><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      <svg data-icon="custom" width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" hidden><path d="M4 7H14M18 7H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="7" r="2" fill="currentColor"/><path d="M4 12H6M10 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="8" cy="12" r="2" fill="currentColor"/><path d="M4 17H12M16 17H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="14" cy="17" r="2" fill="currentColor"/></svg>
+    </span>
+    <span class="pg-theme-gear-icon" aria-hidden="true">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M12 3.5V6M12 18V20.5M20.5 12H18M6 12H3.5M17.8 6.2L16 8M8 16L6.2 17.8M17.8 17.8L16 16M8 8L6.2 6.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </span>
+  </button>
+
+  <div class="pg-theme-menu" data-pg-theme-menu hidden role="menu">
+    <button type="button" class="pg-theme-menu-item" data-pg-theme-choice="light" role="menuitem">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="2"/><path d="M12 2.5V5M12 19V21.5M21.5 12H19M5 12H2.5M18.5 5.5L16.8 7.2M7.2 16.8L5.5 18.5M18.5 18.5L16.8 16.8M7.2 7.2L5.5 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      Light mode
+    </button>
+    <button type="button" class="pg-theme-menu-item" data-pg-theme-choice="dark" role="menuitem">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      Dark mode
+    </button>
+    <button type="button" class="pg-theme-menu-item" data-pg-theme-choice="custom" role="menuitem">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4 7H14M18 7H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="7" r="2" fill="currentColor"/><path d="M4 12H6M10 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="8" cy="12" r="2" fill="currentColor"/><path d="M4 17H12M16 17H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="14" cy="17" r="2" fill="currentColor"/></svg>
+      Custom
+    </button>
+  </div>
+ </div>
+
+ <div class="pg-theme-modal-backdrop" data-pg-theme-modal-backdrop hidden>
+  <div class="pg-theme-modal" role="dialog" aria-modal="true" aria-labelledby="pg-theme-modal-title">
+    <button type="button" class="pg-theme-modal-close" data-pg-theme-modal-close aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div id="pg-theme-modal-title" class="pg-theme-modal-title">Everyone's eyeballs are different! Choose what works for you.</div>
+    {/* TODO: once the accessibility write-up exists, add a link here — "Accessibility also means customization; here's why I added this." */}
+    <div class="pg-theme-modal-fields">
+      <label class="pg-theme-modal-field">
+        Font color
+        <input type="color" data-pg-theme-custom-ink />
+      </label>
+      <label class="pg-theme-modal-field">
+        Background color
+        <input type="color" data-pg-theme-custom-bg />
+      </label>
+    </div>
+    <div class="pg-theme-modal-actions">
+      <button type="button" class="pg-btn" data-pg-theme-apply style="font-family: var(--font-mono); font-size: var(--fs-13); letter-spacing: var(--ls-4); text-transform: uppercase; padding: var(--pad-btn-lg); border-radius: var(--radius-btn); border: none; color: var(--surface); background: var(--accent-solid);">Apply</button>
+      <button type="button" class="pg-btn" data-pg-theme-revert style="font-family: var(--font-mono); font-size: var(--fs-13); letter-spacing: var(--ls-4); text-transform: uppercase; padding: var(--pad-btn-lg); border-radius: var(--radius-btn); border: 1px solid var(--ink); color: var(--ink); background: transparent;">Revert</button>
+    </div>
+  </div>
+ </div>
+</div>
+
+<style>
+  .pg-theme-toggle { position: relative; }
+  .pg-theme-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-btn);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    font: inherit;
+  }
+  .pg-theme-btn:hover { border-color: var(--ink); }
+  .pg-theme-mode-icon, .pg-theme-gear-icon { display: flex; }
+  .pg-theme-gear-icon { color: var(--gray-mid); }
+
+  .pg-theme-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    min-width: 160px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-btn);
+    box-shadow: var(--shadow-md);
+    padding: 6px;
+  }
+  .pg-theme-menu[hidden] { display: none; }
+  .pg-theme-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: var(--fs-13);
+    text-align: left;
+    cursor: pointer;
+  }
+  .pg-theme-menu-item:hover { background: var(--bg-subtle); }
+  .pg-theme-menu-item[aria-current="true"] { color: var(--accent-solid); font-weight: var(--fw-semibold); }
+
+  .pg-theme-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: oklch(0% 0 0 / 45%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .pg-theme-modal-backdrop[hidden] { display: none; }
+  .pg-theme-modal {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .pg-theme-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--gray-mid);
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  .pg-theme-modal-close:hover { color: var(--ink); background: var(--bg-subtle); }
+  .pg-theme-modal-title {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-17);
+    line-height: 1.4;
+    color: var(--ink);
+    max-width: 280px;
+  }
+  .pg-theme-modal-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .pg-theme-modal-field {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-13);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-4);
+    color: var(--ink-soft);
+  }
+  .pg-theme-modal-field input[type="color"] {
+    width: 100%;
+    height: 40px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: none;
+    cursor: pointer;
+  }
+  .pg-theme-modal-actions {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-top: 4px;
+  }
+</style>
+
+<script>
+  const INK_TOKENS = ['--ink', '--ink-soft', '--ink-mid', '--gray-dark', '--gray', '--gray-mid', '--gray-mid-2'];
+  const BG_TOKENS = ['--bg-page', '--bg-subtle', '--surface', '--surface-card', '--white'];
+
+  function clearCustomProps() {
+    for (const t of [...INK_TOKENS, ...BG_TOKENS]) document.documentElement.style.removeProperty(t);
+  }
+
+  function applyCustomColors(ink: string, bg: string) {
+    for (const t of INK_TOKENS) document.documentElement.style.setProperty(t, ink);
+    for (const t of BG_TOKENS) document.documentElement.style.setProperty(t, bg);
+  }
+
+  function setMode(mode: 'light' | 'dark') {
+    clearCustomProps();
+    document.documentElement.setAttribute('data-theme', mode);
+    localStorage.setItem('pg-theme', mode);
+    // Tracked separately from "pg-theme" so Custom can find its way back to
+    // the right base mode even after Apply overwrites "pg-theme" to 'custom'.
+    localStorage.setItem('pg-theme-base', mode);
+  }
+
+  function computedHex(varName: string): string {
+    const probe = document.createElement('div');
+    probe.style.color = `var(${varName})`;
+    document.body.appendChild(probe);
+    const cssColor = getComputedStyle(probe).color;
+    document.body.removeChild(probe);
+    // Canvas normalizes any CSS color (oklch, rgb, etc.) to #rrggbb when read back.
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return '#000000';
+    ctx.fillStyle = cssColor;
+    return ctx.fillStyle;
+  }
+
+  function initThemeToggle(root: ParentNode) {
+    const btn = root.querySelector<HTMLButtonElement>('[data-pg-theme-btn]');
+    const menu = root.querySelector<HTMLElement>('[data-pg-theme-menu]');
+    const modeIcon = root.querySelector<HTMLElement>('[data-pg-theme-mode-icon]');
+    const backdrop = root.querySelector<HTMLElement>('[data-pg-theme-modal-backdrop]');
+    const inkInput = root.querySelector<HTMLInputElement>('[data-pg-theme-custom-ink]');
+    const bgInput = root.querySelector<HTMLInputElement>('[data-pg-theme-custom-bg]');
+    const applyBtn = root.querySelector<HTMLButtonElement>('[data-pg-theme-apply]');
+    const revertBtn = root.querySelector<HTMLButtonElement>('[data-pg-theme-revert]');
+    const closeBtn = root.querySelector<HTMLButtonElement>('[data-pg-theme-modal-close]');
+    if (!btn || !menu || !modeIcon || !backdrop || !inkInput || !bgInput || !applyBtn || !revertBtn || !closeBtn) return;
+
+    let modeBeforeCustom: 'light' | 'dark' = 'light';
+
+    const ICON_FOR_MODE: Record<string, string> = { light: 'sun', dark: 'moon', custom: 'custom' };
+
+    function syncModeIcon() {
+      const current = localStorage.getItem('pg-theme') || 'light';
+      const iconName = ICON_FOR_MODE[current] || 'sun';
+      modeIcon!.querySelectorAll('svg').forEach((svg) => {
+        // SVGElement doesn't reliably reflect the `.hidden` IDL property to
+        // the content attribute, so set/remove the attribute directly.
+        if (svg.dataset.icon === iconName) svg.removeAttribute('hidden');
+        else svg.setAttribute('hidden', '');
+      });
+      menu!.querySelectorAll<HTMLElement>('[data-pg-theme-choice]').forEach((item) => {
+        if (item.dataset.pgThemeChoice === current) item.setAttribute('aria-current', 'true');
+        else item.removeAttribute('aria-current');
+      });
+    }
+
+    function closeMenu() {
+      menu!.hidden = true;
+      btn!.setAttribute('aria-expanded', 'false');
+    }
+    function openMenu() {
+      menu!.hidden = false;
+      btn!.setAttribute('aria-expanded', 'true');
+    }
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (menu!.hidden) openMenu();
+      else closeMenu();
+    });
+    document.addEventListener('click', (e) => {
+      if (!menu!.hidden && !root.contains(e.target as Node)) closeMenu();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeMenu();
+        if (!backdrop!.hidden) dismissModal();
+      }
+    });
+
+    function openModal() {
+      modeBeforeCustom = localStorage.getItem('pg-theme-base') === 'dark' ? 'dark' : 'light';
+      // Base the starting swatch on whatever's active right now (custom colors if already custom, else the base mode).
+      inkInput!.value = computedHex('--ink');
+      bgInput!.value = computedHex('--bg-page');
+      backdrop!.hidden = false;
+      closeMenu();
+    }
+    function closeModal() {
+      backdrop!.hidden = true;
+    }
+    function dismissModal() {
+      setMode(modeBeforeCustom);
+      closeModal();
+      syncModeIcon();
+    }
+
+    menu.querySelectorAll<HTMLButtonElement>('[data-pg-theme-choice]').forEach((item) => {
+      item.addEventListener('click', () => {
+        const choice = item.dataset.pgThemeChoice;
+        if (choice === 'light' || choice === 'dark') {
+          setMode(choice);
+          closeMenu();
+          syncModeIcon();
+        } else if (choice === 'custom') {
+          openModal();
+        }
+      });
+    });
+
+    function previewCustom() {
+      applyCustomColors(inkInput!.value, bgInput!.value);
+    }
+    inkInput.addEventListener('input', previewCustom);
+    bgInput.addEventListener('input', previewCustom);
+
+    applyBtn.addEventListener('click', () => {
+      applyCustomColors(inkInput!.value, bgInput!.value);
+      document.documentElement.setAttribute('data-theme', modeBeforeCustom);
+      localStorage.setItem('pg-theme', 'custom');
+      localStorage.setItem('pg-theme-custom-ink', inkInput!.value);
+      localStorage.setItem('pg-theme-custom-bg', bgInput!.value);
+      closeModal();
+      syncModeIcon();
+    });
+
+    revertBtn.addEventListener('click', dismissModal);
+    closeBtn.addEventListener('click', dismissModal);
+
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) dismissModal();
+    });
+
+    // Restore custom colors on load if that was the last applied theme.
+    const storedTheme = localStorage.getItem('pg-theme');
+    if (storedTheme === 'custom') {
+      const ink = localStorage.getItem('pg-theme-custom-ink');
+      const bg = localStorage.getItem('pg-theme-custom-bg');
+      if (ink && bg) applyCustomColors(ink, bg);
+    }
+    syncModeIcon();
+  }
+
+  function initAll() {
+    document.querySelectorAll('[data-pg-theme-toggle]').forEach((el) => initThemeToggle(el));
+  }
+
+  initAll();
+  document.addEventListener('astro:page-load', initAll);
+</script>

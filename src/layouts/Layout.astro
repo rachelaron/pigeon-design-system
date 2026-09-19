@@ -25,6 +25,29 @@ const { title, siteName, navItems, footerOwner = siteName, footerLinks = [], hom
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <script is:inline>
+      // Runs synchronously, before first paint, so the visitor's stored
+      // theme choice (default: light, regardless of OS preference) applies
+      // immediately instead of flashing the OS-dark theme first. The
+      // interactive toggle (ThemeToggle.astro) owns everything past this.
+      (function () {
+        try {
+          var theme = localStorage.getItem('pg-theme') || 'light';
+          var base = localStorage.getItem('pg-theme-base') === 'dark' ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', theme === 'custom' ? base : theme);
+          if (theme === 'custom') {
+            var ink = localStorage.getItem('pg-theme-custom-ink');
+            var bg = localStorage.getItem('pg-theme-custom-bg');
+            if (ink && bg) {
+              var inkTokens = ['--ink', '--ink-soft', '--ink-mid', '--gray-dark', '--gray', '--gray-mid', '--gray-mid-2'];
+              var bgTokens = ['--bg-page', '--bg-subtle', '--surface', '--surface-card', '--white'];
+              inkTokens.forEach(function (t) { document.documentElement.style.setProperty(t, ink); });
+              bgTokens.forEach(function (t) { document.documentElement.style.setProperty(t, bg); });
+            }
+          }
+        } catch (e) {}
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} · {siteName}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
