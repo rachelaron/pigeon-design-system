@@ -1,4 +1,5 @@
 ---
+import PigeonFootprints from './PigeonFootprints.astro';
 interface FooterLink {
   href: string;
   label: string;
@@ -8,14 +9,26 @@ interface Props {
   links?: FooterLink[];
 }
 const { owner, links = [] } = Astro.props;
+const hasExtra = Astro.slots.has('default');
 ---
-<footer style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 24px 0 40px; border-top: 1px solid var(--ink); font-family: var(--font-mono); font-size: var(--fs-11); color: var(--gray-dark); text-transform: uppercase; letter-spacing: var(--ls-5);">
-  <div>© {owner}</div>
-  {links.length > 0 && (
-    <div style="display: flex; gap: var(--space-24);">
-      {links.map((link) => (
-        <a href={link.href} style="display: inline-block; padding: 14px 2px; margin: -14px -2px;">{link.label}</a>
-      ))}
-    </div>
+<footer style="padding: 0 0 40px; font-family: var(--font-mono); font-size: var(--fs-11); color: var(--gray-dark); text-transform: uppercase; letter-spacing: var(--ls-5);">
+  {hasExtra && (
+    <>
+      <PigeonFootprints id="pg-foot-footer-extra" margin="0 0 32px" />
+      <div style="margin-bottom: 20px; text-transform: none; letter-spacing: normal;">
+        <slot />
+      </div>
+    </>
   )}
+  <PigeonFootprints id="pg-foot-footer" margin="20px 0" />
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+    <div>© {owner}</div>
+    {links.length > 0 && (
+      <div style="display: flex; gap: var(--space-24);">
+        {links.map((link) => (
+          <a href={link.href} style="display: inline-block; padding: 14px 2px; margin: -14px -2px;">{link.label}</a>
+        ))}
+      </div>
+    )}
+  </div>
 </footer>

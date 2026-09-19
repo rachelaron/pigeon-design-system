@@ -43,3 +43,17 @@ img, svg { max-width: 100%; height: auto; }
   .pg-hero-h1 { font-size: var(--fs-36) !important; }
   .pg-page-h1 { font-size: var(--fs-27) !important; }
 }
+
+/*
+  Shared sticky-TOC layout: pairs TableOfContents.astro (a 200px sticky
+  rail) with a body column. Any page using TableOfContents wraps both in
+  this grid — see case-studies/[slug].astro and about.astro.
+*/
+.pg-toc-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: var(--space-40);
+}
+@media (max-width: 900px) {
+  .pg-toc-layout { grid-template-columns: 1fr; gap: var(--space-24); }
+}

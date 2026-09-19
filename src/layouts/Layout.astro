@@ -38,7 +38,9 @@ const { title, siteName, navItems, footerOwner = siteName, footerLinks = [], hom
         <main>
           <slot />
         </main>
-        <Footer owner={footerOwner} links={footerLinks} />
+        <Footer owner={footerOwner} links={footerLinks}>
+          <slot name="footer" />
+        </Footer>
       </div>
     </div>
   </body>
