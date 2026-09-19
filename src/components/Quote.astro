@@ -1,0 +1,51 @@
+---
+interface Props {
+  attribution?: string;
+}
+const { attribution } = Astro.props;
+---
+<figure class="pg-quote">
+  <p class="pg-quote-mark" aria-hidden="true">&ldquo;</p>
+  <blockquote class="pg-quote-text">
+    <slot />
+  </blockquote>
+  {attribution && <figcaption class="pg-quote-attribution">&mdash; {attribution}</figcaption>}
+</figure>
+
+<style>
+  .pg-quote {
+    background: var(--bg-subtle);
+    border-left: 3px solid var(--accent-solid);
+    border-radius: var(--radius-lg);
+    padding: var(--pad-panel);
+    margin: 0 0 24px;
+    position: relative;
+  }
+  .pg-quote-mark {
+    font-family: var(--font-mono);
+    font-size: var(--fs-50);
+    line-height: 1;
+    color: var(--accent);
+    opacity: 0.35;
+    margin: 0 0 -14px;
+  }
+  .pg-quote-text {
+    margin: 0;
+    padding: 0;
+    border: none;
+    font-family: var(--font-sans);
+    font-style: italic;
+    font-size: var(--fs-18);
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .pg-quote-attribution {
+    font-family: var(--font-mono);
+    font-size: var(--fs-12);
+    letter-spacing: var(--ls-4);
+    text-transform: uppercase;
+    color: var(--accent-solid);
+    font-weight: var(--fw-medium);
+    margin-top: 12px;
+  }
+</style>

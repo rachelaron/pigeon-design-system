@@ -1,0 +1,63 @@
+---
+interface Props {
+  problem: string;
+  solution: string;
+  impact: string;
+}
+const { problem, solution, impact } = Astro.props;
+---
+<div class="pg-summary-cards">
+  <div class="pg-summary-card">
+    <div class="pg-summary-label">Problem</div>
+    <p>{problem}</p>
+  </div>
+  <div class="pg-summary-card">
+    <div class="pg-summary-label">Solution</div>
+    <p>{solution}</p>
+  </div>
+  <div class="pg-summary-card pg-summary-card--impact">
+    <div class="pg-summary-label">Impact</div>
+    <p>{impact}</p>
+  </div>
+</div>
+
+<style>
+  .pg-summary-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-20);
+    margin: 0 0 40px;
+  }
+  .pg-summary-card {
+    background: var(--bg-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--pad-panel-alt);
+  }
+  .pg-summary-card--impact {
+    background: var(--surface-card);
+    border: 2px solid var(--accent-solid);
+  }
+  .pg-summary-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-12);
+    letter-spacing: var(--ls-10);
+    text-transform: uppercase;
+    color: var(--gray-mid);
+    font-weight: var(--fw-medium);
+    margin: 0 0 12px;
+  }
+  .pg-summary-card--impact .pg-summary-label { color: var(--accent-solid); }
+  .pg-summary-card p {
+    font-size: var(--fs-16);
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .pg-summary-card--impact p {
+    color: var(--ink);
+    font-weight: var(--fw-bold);
+  }
+  @media (max-width: 700px) {
+    .pg-summary-cards { grid-template-columns: 1fr; }
+  }
+</style>

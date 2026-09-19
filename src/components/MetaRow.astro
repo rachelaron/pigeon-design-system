@@ -8,17 +8,41 @@ interface Props {
 }
 const { items } = Astro.props;
 ---
-<div class="mr-row" style="display: flex; gap: var(--space-14); margin: 32px 0 8px; flex-wrap: wrap;">
+<div class="mr-row">
   {items.map((item) => (
-    <div class="mr-item" style="flex: 1; background: var(--bg-subtle); border-radius: var(--radius-lg); padding: var(--pad-card);">
-      <div style="font-family: var(--font-mono); font-size: var(--fs-10); color: var(--gray-mid); text-transform: uppercase; letter-spacing: var(--ls-8);">{item.label}</div>
-      <div style="font-family: var(--font-mono); font-weight: var(--fw-bold); font-size: var(--fs-18); margin-top: 4px;">{item.value}</div>
+    <div class="mr-item">
+      <div class="mr-label">{item.label}</div>
+      <div class="mr-value">{item.value}</div>
     </div>
   ))}
 </div>
 
 <style>
+  .mr-row {
+    display: flex;
+    gap: var(--space-40);
+    margin: 32px 0 8px;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--border-light);
+    padding-top: var(--space-20);
+  }
+  .mr-item { flex: 1 1 0; min-width: 140px; }
+  .mr-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-11);
+    color: var(--gray-mid);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-8);
+    margin-bottom: 6px;
+  }
+  .mr-value {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-16);
+    color: var(--ink);
+    line-height: 1.4;
+  }
   @media (max-width: 480px) {
-    .mr-item { flex: 1 1 calc(50% - var(--space-14)); }
+    .mr-item { flex: 1 1 calc(50% - var(--space-20)); }
   }
 </style>

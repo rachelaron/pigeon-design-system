@@ -1,11 +1,13 @@
 ---
 interface Props {
   action: string;
+  redirectTo?: string;
 }
-const { action } = Astro.props;
+const { action, redirectTo } = Astro.props;
 ---
 <form action={action} method="POST" style="display: flex; flex-direction: column; gap: var(--space-14); width: 100%; max-width: 420px; margin-top: 8px;">
   <input type="text" name="_hp" tabindex="-1" autocomplete="off" style="position: absolute; left: -9999px; width: 1px; height: 1px;" aria-hidden="true" />
+  {redirectTo && <input type="hidden" name="redirect_to" value={redirectTo} />}
   <label style="display: flex; flex-direction: column; gap: 6px; font-family: var(--font-mono); font-size: var(--fs-12); text-transform: uppercase; letter-spacing: var(--ls-5); color: var(--ink-soft);">
     Name
     <input type="text" name="name" required style="font-family: var(--font-sans); font-size: var(--fs-15); padding: 10px 14px; border-radius: var(--radius-lg); border: 1px solid var(--border-light); background: var(--white);" />

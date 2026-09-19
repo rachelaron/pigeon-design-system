@@ -12,23 +12,70 @@ const items = headings.filter((h) => h.depth === 2);
 ---
 {items.length > 0 && (
   <nav class="pg-toc" aria-label="Table of contents">
-    <div class="pg-toc-label">On this page</div>
-    <ol class="pg-toc-list">
-      {items.map((item, i) => (
-        <li><a href={`#${item.slug}`}><span class="pg-toc-num">{String(i + 1).padStart(2, '0')}</span>{item.text}</a></li>
-      ))}
-    </ol>
+    <div class="pg-toc-inner">
+      <div class="pg-toc-label">On this page</div>
+      <ol class="pg-toc-list">
+        {items.map((item) => (
+          <li><a href={`#${item.slug}`} data-toc-link data-slug={item.slug}>{item.text}</a></li>
+        ))}
+      </ol>
+    </div>
   </nav>
 )}
 
 <style>
-  .pg-toc { background: var(--bg-subtle); border-radius: var(--radius-lg); padding: var(--pad-panel-alt); margin: 8px 0 44px; }
-  .pg-toc-label { font-family: var(--font-mono); font-size: var(--fs-12); letter-spacing: var(--ls-10); text-transform: uppercase; color: var(--accent-solid); font-weight: var(--fw-medium); margin: 0 0 16px; }
-  .pg-toc-list { list-style: none; margin: 0; padding: 0; column-count: 2; column-width: 200px; column-gap: var(--space-24); }
-  .pg-toc-list li { break-inside: avoid; margin-bottom: 10px; }
-  .pg-toc-list a { display: flex; align-items: baseline; gap: 10px; font-family: var(--font-mono); font-size: var(--fs-14); }
-  .pg-toc-num { color: var(--accent); font-weight: var(--fw-bold); font-size: var(--fs-12); flex: 0 0 auto; }
-  @media (max-width: 700px) {
-    .pg-toc-list { column-count: 1; }
+  /*
+    Sticky lives on .pg-toc-inner, a plain block child, rather than on
+    .pg-toc itself (the grid item). Sticky positioning on a direct
+    grid/flex item doesn't hold here — confirmed by isolated repro — while
+    a plain block child of a stretched grid item sticks correctly.
+  */
+  .pg-toc-inner { position: sticky; top: var(--space-24); }
+  .pg-toc-label { font-family: var(--font-mono); font-size: var(--fs-12); letter-spacing: var(--ls-10); text-transform: uppercase; color: var(--gray-mid); font-weight: var(--fw-medium); margin: 0 0 16px; }
+  .pg-toc-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  .pg-toc-list a {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--fs-14);
+    line-height: 1.4;
+    color: var(--gray-mid);
+    padding: 7px 0 7px 14px;
+    border-left: 2px solid var(--border);
+    transition: var(--transition-base);
+  }
+  .pg-toc-list a:hover { color: var(--ink); border-left-color: var(--gray-light); }
+  .pg-toc-list a.is-active { color: var(--ink); font-weight: var(--fw-bold); border-left-color: var(--accent-solid); }
+  @media (max-width: 900px) {
+    .pg-toc-inner { position: static; }
   }
 </style>
+
+<script>
+  function initToc() {
+    const links = document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]');
+    if (!links.length) return;
+    const targets = Array.from(links)
+      .map((link) => document.getElementById(link.dataset.slug ?? ''))
+      .filter((el): el is HTMLElement => el !== null);
+    if (!targets.length) return;
+
+    const setActive = (slug: string) => {
+      links.forEach((link) => {
+        link.classList.toggle('is-active', link.dataset.slug === slug);
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting);
+        if (visible.length > 0) setActive(visible[0].target.id);
+      },
+      { rootMargin: '0px 0px -70% 0px', threshold: 0 }
+    );
+    targets.forEach((target) => observer.observe(target));
+    setActive(targets[0].id);
+  }
+
+  initToc();
+  document.addEventListener('astro:page-load', initToc);
+</script>
