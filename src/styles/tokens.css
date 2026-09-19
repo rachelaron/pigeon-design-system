@@ -1,0 +1,119 @@
+/*
+  DESIGN TOKENS — "Pigeon" design system
+  ===================================================
+  Single source of truth for color, type, radius, shadow, and spacing,
+  shared across every site that depends on pigeon-design-system.
+  Imported once by Layout.astro. Change a value here and it updates
+  every consuming site on next install/build — components reference
+  these via var(--token-name) instead of hardcoded hex/oklch/px values.
+
+  Originated on rachel-aron.com; see that site's /style-guide/ for a
+  live, visual reference of every token and the components built from
+  them.
+*/
+
+:root {
+
+  /* ---------- COLOR — neutrals (cool, hue ~250) ---------- */
+  /* Darkest to lightest. --ink is primary text; --surface/--white are backgrounds. */
+  --ink:          oklch(20% 0.02 250);   /* primary text, headings, dark fills */
+  --ink-soft:     oklch(30% 0.014 250);  /* secondary dark text */
+  --ink-mid:      oklch(35% 0.02 250);
+  --gray-dark:    oklch(45% 0.02 250);
+  --gray:         oklch(50% 0.02 250);
+  --gray-mid:     oklch(50% 0.02 250);   /* muted / secondary text — darkened from 55% for WCAG AA 4.5:1 on --bg-page */
+  --gray-mid-2:   oklch(58% 0.02 250);
+  --gray-light:   oklch(72% 0.012 250);  /* dashed borders, disabled */
+  --border:       oklch(88% 0.012 250);
+  --border-light: oklch(90% 0.012 250);
+  --bg-page:      oklch(92% 0.01 250);  /* <body> background, "paper" */
+  --bg-subtle:    oklch(96.5% 0.01 250);
+  --surface:      oklch(99% 0 0);       /* near-white card/panel fill */
+  --surface-card: oklch(99.4% 0.006 250);
+  --white:        #ffffff;
+
+  /* ---------- COLOR — accent teal ----------
+     Two definitions of "the" brand teal are both in live use — same intent,
+     different exact values (one oklch, one hex). Left as two tokens so this
+     refactor doesn't silently shift color; see /style-guide/ for a note
+     on consolidating them. */
+  --accent:       oklch(55% 0.09 190);  /* primary teal — links, icons, borders */
+  --accent-solid: #198179;              /* secondary teal — fills, hovers. Darkened from #2E8F87 so white button text clears 4.5:1 */
+
+  /* ---------- COLOR — accent lilac ----------
+     Pairs with the teal accent for a two-tone treatment (thick teal border +
+     flat lilac drop shadow) on preview cards — see --shadow-card-* below. */
+  --lilac: oklch(72% 0.1 322);
+
+  /* ---------- COLOR — shadow tint (ink at low opacity) ---------- */
+  --shadow-sm: 0 1px 3px oklch(20% 0.02 250 / 6%);
+  --shadow-md: 4px 6px 0 oklch(20% 0.02 250 / 10%), 2px 10px 16px oklch(20% 0.02 250 / 16%);
+  --shadow-lg: 0 12px 28px oklch(20% 0.02 250 / 14%);
+
+  /* Flat (0-blur) lilac shadow for cards with a thick teal border — the
+     "sticker" pairing of --accent-solid + --lilac. */
+  --shadow-card:       6px 6px 0 var(--lilac);
+  --shadow-card-hover: 10px 10px 0 var(--lilac);
+
+  /* ---------- TYPE ---------- */
+  --font-mono: 'Space Mono', monospace;  /* primary — labels, body, UI text */
+  --font-sans: 'Work Sans', sans-serif;  /* secondary — longer-form copy */
+
+  /* Type scale (named by current px value — tweak the value, not the name) */
+  --fs-10: 10px;
+  --fs-11: 11px;
+  --fs-12: 12px;
+  --fs-13: 13px;
+  --fs-14: 14px;
+  --fs-15: 15px;
+  --fs-16: 16px;
+  --fs-17: 17px;
+  --fs-18: 18px;
+  --fs-19: 19px;
+  --fs-20: 20px;
+  --fs-22: 22px;
+  --fs-27: 27px;
+  --fs-36: 36px;
+  --fs-40: 40px;
+  --fs-50: 50px;
+
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  /* Letter-spacing, named by hundredths-of-an-em */
+  --ls-4:  0.04em;
+  --ls-5:  0.05em;
+  --ls-6:  0.06em;
+  --ls-8:  0.08em;
+  --ls-10: 0.1em;
+
+  /* ---------- RADIUS ---------- */
+  --radius-none: 0;
+  --radius-lg:   20px;
+  --radius-pill: 999px;
+
+  /* ---------- SPACING SCALE ----------
+     Reusable gap/padding steps pulled from real, repeated usage.
+     Section-level layout spacing (hero padding, page rhythm) is left as
+     inline one-offs by design — see CLAUDE.md scope note. */
+  --space-8:  8px;
+  --space-14: 14px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-28: 28px;
+  --space-40: 40px;
+
+  /* Component-specific padding shorthand, kept as named pairs since they
+     read as a single "component size" rather than two scale steps */
+  --pad-btn:      6px 14px;   /* pill buttons, tags */
+  --pad-btn-lg:   14px 26px;  /* primary CTA buttons */
+  --pad-card:     14px 16px;  /* card / list-item */
+  --pad-card-sm:  12px 16px;
+  --pad-panel:    30px 34px;
+  --pad-panel-alt: 16px 28px;
+
+  /* ---------- MOTION ---------- */
+  --transition-base: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}

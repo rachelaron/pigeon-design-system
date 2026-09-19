@@ -1,0 +1,44 @@
+/*
+  Site-wide reset and boilerplate — previously duplicated byte-for-byte in
+  an inline <style> block on every page. Page-specific layout stays inline
+  in component markup by convention (see tokens.css scope note); this file
+  is only the shared, non-page-specific rules.
+*/
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg-page); }
+body { font-family: var(--font-sans); color: var(--ink-soft); }
+
+a { color: var(--ink-soft); text-decoration: none; }
+a:hover:not(.pg-btn) { color: var(--accent); }
+
+:focus-visible { outline: 2px solid var(--accent-solid); outline-offset: 2px; }
+
+.pg-btn { transition: var(--transition-base); }
+.pg-btn:hover { box-shadow: var(--shadow-card); transform: translateY(-2px); }
+
+.pg-tag::before { content: "#"; margin-right: 0.3em; }
+
+.pg-card { border: 3px solid var(--accent-solid); box-shadow: var(--shadow-card); transition: var(--transition-base); }
+.pg-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); color: var(--ink); }
+
+.pg-page { max-width: 1280px; margin: 0 auto; width: 100%; overflow-x: hidden; }
+
+img, svg { max-width: 100%; height: auto; }
+
+/*
+  Responsive layer. Page/component layout is otherwise inline `style="display: flex"`
+  by convention (see tokens.css scope note), so it can't carry its own media queries —
+  these two breakpoints (tablet ≤900px, phone ≤480px) are the shared reflow rules,
+  targeted at opt-in classes (.pg-stack, .pg-hero-h1, .pg-page-h1, .pg-shell) added
+  alongside the inline styles, plus a generic wrap fallback for any other flex row.
+*/
+@media (max-width: 900px) {
+  .pg-page div[style*="display: flex"] { flex-wrap: wrap; }
+  .pg-stack { flex-direction: column !important; }
+  .pg-stack > * { flex: 1 1 auto !important; width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .pg-hero-h1 { font-size: var(--fs-36) !important; }
+  .pg-page-h1 { font-size: var(--fs-27) !important; }
+}

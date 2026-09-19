@@ -1,0 +1,33 @@
+---
+interface NavItem {
+  href: string;
+  label: string;
+}
+interface Props {
+  siteName: string;
+  homeHref?: string;
+  items: NavItem[];
+}
+const { siteName, homeHref = '/', items } = Astro.props;
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => (href === homeHref ? path === homeHref : path.startsWith(href));
+---
+<nav class="pg-nav" aria-label="Primary" style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--ink); padding-bottom: 20px;">
+  <a href={homeHref} style="font-family: var(--font-mono); font-weight: var(--fw-bold); font-size: var(--fs-20); color: var(--ink);">{siteName}</a>
+  <div class="pg-nav-links" style="display: flex; gap: var(--space-28); font-family: var(--font-mono); font-size: var(--fs-12); letter-spacing: var(--ls-6); text-transform: uppercase;">
+    {items.map((item) => (
+      <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined} style={isActive(item.href) ? 'font-weight: var(--fw-semibold);' : ''}>{item.label}</a>
+    ))}
+  </div>
+</nav>
+
+<style>
+  /* Negative margin offsets the padding so the enlarged tap target doesn't shift layout. */
+  .pg-nav-links a { padding: 13px 2px; margin: -13px -2px; }
+
+  @media (max-width: 480px) {
+    .pg-nav { flex-wrap: wrap; gap: 14px; }
+    .pg-nav-links { gap: var(--space-16) !important; }
+  }
+</style>

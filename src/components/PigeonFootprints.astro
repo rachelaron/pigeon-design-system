@@ -1,0 +1,36 @@
+---
+// Decorative "pigeon footprint" trail. Positions are generated to fit
+// whatever `width` is passed in. The original hand-authored version
+// hardcoded one 1136-wide footprint list and reused it verbatim on the
+// 640-wide contact page, where half the footprints fell outside the
+// SVG viewBox and were silently clipped. Generating per-width avoids that.
+interface Props {
+  id: string;
+  width?: number;
+  margin?: string;
+}
+const { id, width = 1136, margin = 'var(--space-40) 0' } = Astro.props;
+
+const footprints: { x: number; y: number; rotate: number }[] = [];
+let x = 20;
+let wide = true;
+while (x <= width - 56) {
+  footprints.push({ x, y: wide ? 34 : 18, rotate: wide ? 82 : 100 });
+  x += wide ? 48 : 44;
+  wide = !wide;
+}
+---
+<svg width={width} height="56" viewBox={`0 0 ${width} 56`} fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style={`margin: ${margin}; display: block; width: 100%; max-width: ${width}px; height: auto;`}>
+  <defs>
+    <g id={id}>
+      <circle cx="0" cy="0" r="1" fill="var(--accent)"></circle>
+      <path d="M -0.9 0 L -0.55 -8.45 A 0.55 0.55 0 0 1 0.55 -8.45 L 0.9 0 Z" fill="var(--accent)"></path>
+      <path d="M -0.85 0 L -0.5 -8.1 A 0.5 0.5 0 0 1 0.5 -8.1 L 0.85 0 Z" fill="var(--accent)" transform="rotate(-32)"></path>
+      <path d="M -0.85 0 L -0.5 -8.1 A 0.5 0.5 0 0 1 0.5 -8.1 L 0.85 0 Z" fill="var(--accent)" transform="rotate(32)"></path>
+      <path d="M -0.55 0 L -0.4 5.6 A 0.4 0.4 0 0 0 0.4 5.6 L 0.55 0 Z" fill="var(--accent)"></path>
+    </g>
+  </defs>
+  {footprints.map((f) => (
+    <use href={`#${id}`} transform={`translate(${f.x},${f.y}) rotate(${f.rotate})`}></use>
+  ))}
+</svg>

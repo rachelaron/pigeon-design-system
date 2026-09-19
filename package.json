@@ -1,0 +1,16 @@
+{
+  "name": "pigeon-design-system",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared Pigeon design tokens, base CSS, and Astro components — originated on rachel-aron.com, reused across Astro sites via a local file: dependency.",
+  "exports": {
+    "./tokens.css": "./src/styles/tokens.css",
+    "./global.css": "./src/styles/global.css",
+    "./layouts/*": "./src/layouts/*",
+    "./components/*": "./src/components/*"
+  },
+  "files": [
+    "src"
+  ]
+}

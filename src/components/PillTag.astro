@@ -1,0 +1,15 @@
+---
+interface Props {
+  variant?: 'ink' | 'accent' | 'outline';
+}
+const { variant = 'ink' } = Astro.props;
+
+const variantStyle = {
+  ink: 'background: var(--ink); color: var(--surface);',
+  accent: 'background: var(--accent-solid); color: var(--surface);',
+  outline: 'border: 1px solid var(--accent-solid); color: var(--accent-solid); background: transparent;',
+}[variant];
+---
+<div class="pg-tag" style={`font-family: var(--font-mono); font-size: var(--fs-10); text-transform: uppercase; letter-spacing: var(--ls-4); padding: var(--pad-btn); border-radius: var(--radius-pill); ${variantStyle}`}>
+  <slot />
+</div>

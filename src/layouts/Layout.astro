@@ -1,0 +1,55 @@
+---
+import '../styles/tokens.css';
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface NavItem {
+  href: string;
+  label: string;
+}
+interface FooterLink {
+  href: string;
+  label: string;
+}
+interface Props {
+  title: string;
+  siteName: string;
+  navItems: NavItem[];
+  footerOwner?: string;
+  footerLinks?: FooterLink[];
+  homeHref?: string;
+}
+const { title, siteName, navItems, footerOwner = siteName, footerLinks = [], homeHref = '/' } = Astro.props;
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · {siteName}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Work+Sans:wght@400;500;600&display=swap" />
+    <slot name="head" />
+  </head>
+  <body>
+    <div class="pg-page">
+      <div class="pg-shell">
+        <Nav siteName={siteName} homeHref={homeHref} items={navItems} />
+        <main>
+          <slot />
+        </main>
+        <Footer owner={footerOwner} links={footerLinks} />
+      </div>
+    </div>
+  </body>
+</html>
+
+<style>
+  .pg-shell { padding: 56px 72px 0; }
+  @media (max-width: 900px) {
+    .pg-shell { padding: 40px 32px 0; }
+  }
+  @media (max-width: 480px) {
+    .pg-shell { padding: 24px 18px 0; }
+  }
+</style>

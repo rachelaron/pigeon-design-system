@@ -1,0 +1,24 @@
+---
+interface MetaItem {
+  label: string;
+  value: string;
+}
+interface Props {
+  items: MetaItem[];
+}
+const { items } = Astro.props;
+---
+<div class="mr-row" style="display: flex; gap: var(--space-14); margin: 32px 0 8px; flex-wrap: wrap;">
+  {items.map((item) => (
+    <div class="mr-item" style="flex: 1; background: var(--bg-subtle); border-radius: var(--radius-lg); padding: var(--pad-card);">
+      <div style="font-family: var(--font-mono); font-size: var(--fs-10); color: var(--gray-mid); text-transform: uppercase; letter-spacing: var(--ls-8);">{item.label}</div>
+      <div style="font-family: var(--font-mono); font-weight: var(--fw-bold); font-size: var(--fs-18); margin-top: 4px;">{item.value}</div>
+    </div>
+  ))}
+</div>
+
+<style>
+  @media (max-width: 480px) {
+    .mr-item { flex: 1 1 calc(50% - var(--space-14)); }
+  }
+</style>
